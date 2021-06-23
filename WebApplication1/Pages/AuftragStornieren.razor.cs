@@ -29,6 +29,7 @@ namespace WebApplication1.Pages
         private EditForm? _editForm;
         protected override async Task OnParametersSetAsync()
         {
+            // Put DEBUG point here
             if (Auftragsnummer > 0)
             {
                 // The real project checks in database for an object, simulate with sessionstorage
