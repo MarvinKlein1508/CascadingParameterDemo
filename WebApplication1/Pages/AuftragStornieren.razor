@@ -6,82 +6,16 @@
 
 @if (Input is not null)
 {
-    @*<Title Value="@($"{Auftragsnummer} stornieren")"></Title>*@
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="/Auftraege">Aufträge</a></li>
-        <li class="breadcrumb-item"><a href="/Auftraege/@Auftragsnummer">@Auftragsnummer</a></li>
-        <li class="breadcrumb-item active">Stornieren</li>
-    </ol>
-
-    <h2>AU-@Auftragsnummer stornieren</h2>
     <div class="toolbar">
-
-
-        
-
-
-        <button type="button" class="btn btn-success btn-icon" @onclick="async() => await SaveAsync()">Save</button>
+        <button type="button" class="btn btn-success btn-icon" @onclick="async () => await SaveAsync()">Save</button>
     </div>
 
-    <EditForm Model="Input" @ref="_editForm">
+    <EditForm Model="Input">
         <div class="form-group">
-            <label>Begründung</label>
-            <InputSelect @bind-Value="Input.Begründung" class="form-control">
-                <option value="">--- Auswählen ---</option>
-                @foreach (var template in _templates)
-                    {
-                    <option value="@template.STTE_A_GRUND">@template.STTE_A_GRUND</option>
-                    }
-            </InputSelect>
+            <label>Type any text</label>
+            <InputText @bind-Value="Input.Begründung" class="form-control" />
             <ValidationMessage For="() => Input.Begründung" />
         </div>
-       
-        <div class="custom-control custom-checkbox">
-            <InputCheckbox @bind-Value="Input.MailAnKunden" class="custom-control-input" id="kundenMailSenden" />
-            <label class="custom-control-label" for="kundenMailSenden">Mail an Kunden senden</label>
-        </div>
-        @if (Input.MailAnKunden)
-        {
-            <div class="form-group">
-                <InputTextArea @bind-Value="Input.TextKundenMail" class="form-control" rows="10" />
-                <ValidationMessage For="() => Input.TextKundenMail" />
-            </div>
-        }
-
-
-
-        @if (IstLieferantNotwendig)
-        {
-            <div class="custom-control custom-checkbox">
-                <InputCheckbox @bind-Value="Input.MailAnLieferanten" class="custom-control-input" id="lieferantenMailSenden" />
-                <label class="custom-control-label" for="lieferantenMailSenden">Mail an Lieferanten senden</label>
-            </div>
-            @if (Input.MailAnLieferanten)
-            {
-                <div class="form-group">
-                    <InputTextArea @bind-Value="Input.TextLieferantenMail" class="form-control" rows="10" />
-                    <ValidationMessage For="() => Input.TextLieferantenMail" />
-                </div>
-            }
-        }
-
-        @if (IstBuchhaltungNotwendig)
-        {
-
-            <div class="custom-control custom-checkbox">
-                <InputCheckbox @bind-Value="Input.MailAnBuchhaltung" class="custom-control-input" id="buchhaltungMailSenden" />
-                <label class="custom-control-label" for="buchhaltungMailSenden">Mail an Buchhaltung senden</label>
-            </div>
-
-            @if (Input.MailAnBuchhaltung)
-            {
-                <div class="form-group">
-                    <InputTextArea @bind-Value="Input.TextBuchhaltungsMail" class="form-control" rows="10" />
-                    <ValidationMessage For="() => Input.TextBuchhaltungsMail" />
-                </div>
-            }
-        }
     </EditForm>
-}
 
+}

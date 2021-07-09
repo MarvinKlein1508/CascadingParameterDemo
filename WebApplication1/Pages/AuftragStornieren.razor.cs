@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Data;
 
 namespace WebApplication1.Pages
 {
-    public partial class AuftragStornieren : IDisposable
+    public partial class AuftragStornieren : IAsyncDisposable
     {
         [Parameter] public int Auftragsnummer { get; set; }
 #nullable disable
@@ -16,25 +13,17 @@ namespace WebApplication1.Pages
 #nullable enable
         public AuftragStornierenInput? Input { get; set; }
 
-        public bool IstBuchhaltungNotwendig { get; set; }
-        public bool IstLieferantNotwendig { get; set; }
-        public bool ErfordertZahlartKontodaten { get; set; }
 
-        private List<StornierTemplate> _templates = new List<StornierTemplate>()
-        {
-            new StornierTemplate{ STTE_A_GRUND = "Other" },
-            new StornierTemplate{ STTE_A_GRUND = "Test" }
-        };
 
-        private EditForm? _editForm;
         protected override async Task OnParametersSetAsync()
         {
             // Put DEBUG point here
             if (Auftragsnummer > 0)
             {
                 // The real project checks in database for an object, simulate with sessionstorage
-                bool isStorno  = await SessionStorage.GetItemAsync<bool>(Auftragsnummer.ToString());
+                bool isStorno = await SessionStorage.GetItemAsync<bool>(Auftragsnummer.ToString());
 
+                // This section is now true when you ran SaveAsync before therefor we now have two AlertBoxes. Which is false
                 if (isStorno)
                 {
                     await AddAlertAsync(new AlertBox
@@ -42,7 +31,7 @@ namespace WebApplication1.Pages
                         Message = $"AU-{Auftragsnummer} ist bereits storniert.",
                         AlertType = AlertType.Danger
                     });
-                    navigationManager.NavigateTo("/Auftraege");
+                    navigationManager.NavigateTo("/");
                     return;
                 }
 
@@ -53,45 +42,32 @@ namespace WebApplication1.Pages
 
                 Input.ValueForTextChanged += Input_ValueForTextChanged;
 
-                IstBuchhaltungNotwendig = false;
-                ErfordertZahlartKontodaten = false;
-                IstLieferantNotwendig = false;
+
             }
         }
 
         private async Task SaveAsync()
         {
-            if (_editForm is null || _editForm.EditContext is null || Input is null)
+
+            try
             {
-                return;
+                Console.WriteLine(Mitarbeiter.PersonalNummer);
+                // The real app updates the orde rin database, simulate here
+                await SessionStorage.SetItemAsync(Auftragsnummer.ToString(), true);
+                // Stuff is happening in original project here
+                await AddAlertAsync(new AlertBox
+                {
+                    AlertType = AlertType.Success,
+                    Message = $"AU-{Auftragsnummer} wurde erfolgreich storniert"
+                });
+
+                // This is the important line which causes OnParameterSetAsync to be called again which should be the case
+                navigationManager.NavigateTo("/");
             }
-
-            if (true) // the real app calls validation for edit form here
+            catch (Exception)
             {
-                
-                
-                try
-                {
-                    Console.WriteLine(Mitarbeiter.PersonalNummer);
-                    // The real app updates the orde rin database, simulate here
-                    await SessionStorage.SetItemAsync(Auftragsnummer.ToString(), true);
-                    // Stuff is happening in original project here
-                    await AddAlertAsync(new AlertBox
-                    {
-                        AlertType = AlertType.Success,
-                        Message = $"AU-{Auftragsnummer} wurde erfolgreich storniert"
-                    });
-
-                    // This is the important line
-                    navigationManager.NavigateTo("/");
-                }
-                catch (Exception)
-                {
-                    // Stuff is happening in original project here
-                    throw;
-                }
-
-
+                // Stuff is happening in original project here
+                throw;
             }
         }
 
@@ -102,16 +78,19 @@ namespace WebApplication1.Pages
             StateHasChanged();
         }
 
-       
+
 
         #endregion
-        #region IDisposable
-        public void Dispose()
+        #region IAsyncDisposable
+
+        public ValueTask DisposeAsync()
         {
             if (Input is not null)
             {
                 Input.ValueForTextChanged -= Input_ValueForTextChanged;
             }
+
+            return ValueTask.CompletedTask;
         }
         #endregion
     }

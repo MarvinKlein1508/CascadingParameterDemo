@@ -1,0 +1,37 @@
+﻿@using WebApplication1.Data
+<div class="@AlertClass">
+    <div class="alert-container">
+        @((MarkupString)AlertBox.Message.Replace("\r\n","<br/>"))
+    </div>
+</div>
+@code {
+    [Parameter] public AlertBox AlertBox { get; set; } = new AlertBox();
+
+
+
+    public string AlertClass => AlertBox.AlertType switch
+    {
+        AlertType.Danger => "alert alert-danger",
+        AlertType.Info => "alert alert-info",
+        AlertType.Success => "alert alert-success",
+        AlertType.Warning => "alert alert-warning",
+        AlertType.Primary => "alert alert-primary",
+        AlertType.Dark => "alert alert-dark",
+        AlertType.Light => "alert alert-light",
+        AlertType.Secondary => "alert alert-secondary",
+        _ => "alert alert-primary"
+    };
+
+    public string BackgroundClass => AlertBox.AlertType switch
+    {
+        AlertType.Danger => "bg-danger",
+        AlertType.Info => "bg-info",
+        AlertType.Success => "bg-success",
+        AlertType.Warning => "bg-warning",
+        AlertType.Primary => "bg-primary",
+        AlertType.Dark => "bg-dark",
+        AlertType.Light => "bg-light",
+        AlertType.Secondary => "bg-secondary",
+        _ => "bg-primary"
+    };
+}

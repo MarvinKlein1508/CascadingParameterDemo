@@ -1,14 +1,30 @@
 ﻿@page "/"
+@inject ISessionStorageService SessionStorage
 @using WebApplication1.Data
-<h1>Hello, world!</h1>
+@using Blazored.SessionStorage
+@inherits AlertPageBase
 
-Welcome to your new app.
+@foreach (var alert in ShowAlerts)
+{
+    <Alert AlertBox="alert" />
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
-<a href="/Auftraege/10100/Stornieren">Click here</a>
+<a class="btn btn-primary" href="/Auftraege/10100/Stornieren">Click here</a>
 
-@code {
-#nullable disable
-    [CascadingParameter] public AppMitarbeiter Mitarbeiter { get; set; }
+<button class="btn btn-secondary" @onclick="ClearAsync">Clear SessionStorage</button>
+
+@code { #nullable disable
+            [CascadingParameter] public AppMitarbeiter Mitarbeiter { get; set; }
 #nullable enable
+
+            private async Task ClearAsync()
+            {
+                await SessionStorage.ClearAsync();
+            }
+
+            protected override async Task OnParametersSetAsync()
+            {
+                await SetAlerts();
+            }
+
 } 

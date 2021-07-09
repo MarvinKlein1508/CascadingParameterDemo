@@ -26,7 +26,7 @@ namespace WebApplication1.Pages
             if (alerts is not null)
             {
                 ShowAlerts = alerts;
-                await SessionStorage.ClearAsync();
+                await SessionStorage.RemoveItemAsync("alerts");
             }
         }
         /// <summary>
@@ -40,7 +40,7 @@ namespace WebApplication1.Pages
             alerts.Add(alert);
             await SessionStorage.SetItemAsync("alerts", alerts);
 
-           
+
             await InvokeAsync(StateHasChanged);
         }
 
