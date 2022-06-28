@@ -1,0 +1,7 @@
+﻿@page "/Test2"
+<h3>Test2</h3>
+<p>Put breakpoint in Test2.razor.cs line 15. Then visit this page. You'll notice it calls OnParameterSetAsync. Now Press on Home within the menu. Ýou'll notice OnParameterSetAsync is called again. When removing the Cascading Parameter this won't happen anymore.</p>
+
+<p>This is not good because within OnParameterSetAsync data might be loaded multiple times, or some actions are done twice which should only be done once.</p>
+ 
+
